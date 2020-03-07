@@ -11,6 +11,7 @@ type Config struct {
 
 func init() {
 	gviper = viper.New()
+
 	setupEnv()
 }
 

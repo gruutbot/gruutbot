@@ -1,8 +1,9 @@
 package gruutbot
 
 import (
-	"github.com/sirupsen/logrus"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 )
 
 type Logger interface {
@@ -47,9 +48,11 @@ func logrusLogger(level LogLevel) (lf *logrus.Entry) {
 	if gviper.IsSet(logLevelKey) {
 		level = LogLevel(gviper.GetString(logLevelKey))
 	}
+
 	l.SetLevel(logrusLevel(level))
 	lf = l.WithField("lib", "gruutbot")
 	lf.Infoln("Log level set to", l.Level)
+
 	return
 }
 
@@ -77,5 +80,6 @@ func logrusLevel(level LogLevel) logrus.Level {
 func levelToLower(l LogLevel) LogLevel {
 	s := string(l)
 	s = strings.ToLower(s)
+
 	return LogLevel(s)
 }

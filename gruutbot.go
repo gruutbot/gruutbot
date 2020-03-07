@@ -11,7 +11,7 @@ type GruutBot struct {
 	log    Logger
 }
 
-func New(configs ...Config) GruutBot {
+func New(configs ...Config) *GruutBot {
 	var c Config
 	if len(configs) < 1 {
 		c = Config{}
@@ -21,7 +21,7 @@ func New(configs ...Config) GruutBot {
 
 	v := gviper
 
-	return GruutBot{viper: v, log: getLogger(c)}
+	return &GruutBot{viper: v, log: getLogger(c)}
 }
 
 func (g *GruutBot) Start() {
@@ -34,7 +34,9 @@ func getLogger(c Config) (l Logger) {
 		if c.LogLevel != nil {
 			logLevel = *c.LogLevel
 		}
+
 		l = logrusLogger(logLevel)
+
 		return
 	}
 
