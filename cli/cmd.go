@@ -5,5 +5,6 @@ import (
 )
 
 func main() {
-	gruutbot.Start()
+	gb := gruutbot.New()
+	gb.Start()
 }
