@@ -7,6 +7,8 @@ var gviper *viper.Viper
 type Config struct {
 	Logger   *Logger
 	LogLevel *LogLevel
+	Token    string
+	Prefix   string
 }
 
 func init() {
