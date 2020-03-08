@@ -28,7 +28,7 @@ func NewMessage(message *disgord.Message, session disgord.Session) *CommandMessa
 
 func (m *CommandMessage) Reply(reply string, mentionAuthor bool) (err error) {
 	if mentionAuthor {
-		reply = fmt.Sprintf("<@%s> %s", m.message.Author.ID, reply)
+		reply = fmt.Sprintf("%s %s", m.message.Author.Mention(), reply)
 	}
 
 	_, err = m.message.Reply(context.Background(), m.session, reply)
