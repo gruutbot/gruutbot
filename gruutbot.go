@@ -9,11 +9,12 @@ import (
 )
 
 type GruutBot struct {
-	viper  *viper.Viper
-	client *disgord.Client
-	log    Logger
-	token  string
-	prefix string
+	viper         *viper.Viper
+	client        *disgord.Client
+	log           Logger
+	token         string
+	prefix        string
+	pluginManager *PluginManager
 }
 
 func New(configs ...Config) *GruutBot {
@@ -25,8 +26,22 @@ func New(configs ...Config) *GruutBot {
 	}
 
 	v := gviper
+	log := fetchLogger(c)
 
-	return &GruutBot{viper: v, log: fetchLogger(c), token: fetchToken(c), prefix: fetchPrefix(c)}
+	pluginManager := NewPluginManager(fetchPluginsPath(c), log)
+
+	err := pluginManager.LoadPlugins()
+	if err != nil {
+		log.Panic("Error loading plugins:", err)
+	}
+
+	return &GruutBot{
+		viper:         v,
+		log:           log,
+		token:         fetchToken(c),
+		prefix:        fetchPrefix(c),
+		pluginManager: pluginManager,
+	}
 }
 
 func (g *GruutBot) Start() {
@@ -77,6 +92,22 @@ func fetchPrefix(c Config) (prefix string) {
 
 	if gviper.IsSet(prefixKey) {
 		prefix = gviper.GetString(prefixKey)
+	}
+
+	return
+}
+
+func fetchPluginsPath(c Config) (path string) {
+	const pathKey = "plugins"
+
+	path = strings.TrimSpace(c.Plugins)
+
+	if gviper.IsSet(pathKey) {
+		path = gviper.GetString(pathKey)
+	}
+
+	if len(path) < 1 {
+		path = "plugins"
 	}
 
 	return

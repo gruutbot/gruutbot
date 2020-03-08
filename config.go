@@ -9,6 +9,7 @@ type Config struct {
 	LogLevel *LogLevel
 	Token    string
 	Prefix   string
+	Plugins  string
 }
 
 func init() {
