@@ -18,6 +18,9 @@ func setupEvents(g *GruutBot) {
 	filter.SetPrefix(g.prefix)
 
 	g.client.On(disgord.EvtMessageCreate, filter.NotByBot, filter.HasPrefix, filter.StripPrefix, messageCreate)
+	g.client.On(disgord.EvtReady, func() {
+		_ = g.client.UpdateStatusString(g.prefix)
+	})
 }
 
 func messageCreate(s disgord.Session, evt *disgord.MessageCreate) {
