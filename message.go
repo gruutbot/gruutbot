@@ -39,3 +39,7 @@ func (m *CommandMessage) Reply(reply string, mentionAuthor bool) (err error) {
 func (m *CommandMessage) Info() *disgord.Message {
 	return m.message
 }
+
+func (m *CommandMessage) GuildInfo() (*disgord.Guild, error) {
+	return m.session.GetGuild(context.Background(), m.message.GuildID)
+}
