@@ -21,16 +21,15 @@ func setupEvents(g *GruutBot) {
 }
 
 func messageCreate(s disgord.Session, evt *disgord.MessageCreate) {
-	message := evt.Message
-	content := strings.ToLower(message.Content)
+	m := evt.Message
+	content := strings.ToLower(m.Content)
 	content = strings.TrimSpace(content)
 
-	var err error
-	if content == "ping" {
-		_, err = evt.Message.Reply(context.Background(), s, "Pong!")
-	} else if content == "pong" {
-		_, err = evt.Message.Reply(context.Background(), s, "Ping!")
-	}
+	command := strings.Split(content, " ")[0]
+
+	message := NewMessage(m, s)
+
+	err := pluginManager.commands[command](*message)
 
 	if err != nil {
 		s.Logger().Error(err)

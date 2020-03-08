@@ -28,7 +28,7 @@ func New(configs ...Config) *GruutBot {
 	v := gviper
 	log := fetchLogger(c)
 
-	pluginManager := NewPluginManager(fetchPluginsPath(c), log)
+	pluginManager := GetPluginManager(fetchPluginsPath(c), log)
 
 	err := pluginManager.LoadPlugins()
 	if err != nil {

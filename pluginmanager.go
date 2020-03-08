@@ -1,25 +1,38 @@
 package gruutbot
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"plugin"
+	"sync"
 
 	"github.com/sirupsen/logrus"
 )
+
+var pluginManager *PluginManager
+var pmMux *sync.Mutex
 
 type PluginManager struct {
 	pluginsPath string
 	plugins     map[string]Plugin
 	Log         Logger
+	commands    map[string]func(CommandMessage) error
 }
 
-func NewPluginManager(pluginsPath string, log Logger) *PluginManager {
-	return &PluginManager{
-		pluginsPath: pluginsPath,
-		plugins:     make(map[string]Plugin),
-		Log:         log,
+func GetPluginManager(pluginsPath string, log Logger) *PluginManager {
+	pmMux.Lock()
+	defer pmMux.Unlock()
+
+	if pluginManager == nil {
+		pluginManager = &PluginManager{
+			pluginsPath: pluginsPath,
+			plugins:     make(map[string]Plugin),
+			Log:         log,
+		}
 	}
+
+	return pluginManager
 }
 
 func (pm *PluginManager) LoadPlugins() (err error) {
@@ -83,4 +96,14 @@ func findPlugins(root, pattern string) (matches []string, err error) {
 	}
 
 	return
+}
+
+func (pm *PluginManager) RegisterCommand(command string, f func(CommandMessage) error) error {
+	if pm.commands[command] != nil {
+		return fmt.Errorf("command already registered")
+	}
+
+	pm.commands[command] = f
+
+	return nil
 }
