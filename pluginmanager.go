@@ -17,7 +17,7 @@ type PluginManager struct {
 	pluginsPath string
 	plugins     map[string]Plugin
 	Log         Logger
-	commands    map[string]func(CommandMessage) error
+	commands    map[string]func(CommandMessage, Logger) error
 }
 
 func GetPluginManager(pluginsPath string, log Logger) *PluginManager {
@@ -29,7 +29,7 @@ func GetPluginManager(pluginsPath string, log Logger) *PluginManager {
 			pluginsPath: pluginsPath,
 			plugins:     make(map[string]Plugin),
 			Log:         log,
-			commands:    make(map[string]func(CommandMessage) error),
+			commands:    make(map[string]func(CommandMessage, Logger) error),
 		}
 	}
 
@@ -103,7 +103,7 @@ func findPlugins(root, pattern string) (matches []string, err error) {
 	return
 }
 
-func (pm *PluginManager) RegisterCommand(command string, f func(CommandMessage) error) error {
+func (pm *PluginManager) RegisterCommand(command string, f func(CommandMessage, Logger) error) error {
 	if pm.commands[command] != nil {
 		return fmt.Errorf("command already registered")
 	}
