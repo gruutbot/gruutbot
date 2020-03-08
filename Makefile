@@ -19,6 +19,9 @@ lint:
 plugins:
 	@ $(CURDIR)/$(PLUGINS_DIR)/build.sh $(PLUGINS_DIR) $(BUILD_DIR)/$(PLUGINS_DIR)
 
+submodules:
+	git submodule update --init --recursive --remote
+
 PLATFORMS := linux darwin
 os = $(word 1, $@)
 

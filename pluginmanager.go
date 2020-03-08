@@ -11,7 +11,7 @@ import (
 )
 
 var pluginManager *PluginManager
-var pmMux *sync.Mutex
+var pmMux sync.Mutex
 
 type PluginManager struct {
 	pluginsPath string
@@ -29,6 +29,7 @@ func GetPluginManager(pluginsPath string, log Logger) *PluginManager {
 			pluginsPath: pluginsPath,
 			plugins:     make(map[string]Plugin),
 			Log:         log,
+			commands:    make(map[string]func(CommandMessage) error),
 		}
 	}
 
@@ -67,6 +68,10 @@ func (pm *PluginManager) LoadPlugins() (err error) {
 		logrus.Infof("Registering plugin %s version %s", plug.GetName(), plug.GetVersion())
 		plug.Register(pm)
 	}
+
+	pm.Log.Info("Finished loading plugins")
+	pm.Log.Debug("Loaded plugins", pm.plugins)
+	pm.Log.Debug("Registered commands", pm.commands)
 
 	return
 }
