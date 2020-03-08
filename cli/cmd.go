@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gruutbot/gruutbot"
+	"github.com/gruutbot/gruutbot"
 )
 
 func main() {
