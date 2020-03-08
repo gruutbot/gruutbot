@@ -29,7 +29,7 @@ func messageCreate(s disgord.Session, evt *disgord.MessageCreate) {
 
 	message := NewMessage(m, s)
 
-	err := pluginManager.commands[command](*message)
+	err := pluginManager.commands[command](*message, pluginManager.Log)
 
 	if err != nil {
 		s.Logger().Error(err)
