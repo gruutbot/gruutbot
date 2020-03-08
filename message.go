@@ -35,3 +35,7 @@ func (m *CommandMessage) Reply(reply string, mentionAuthor bool) (err error) {
 
 	return
 }
+
+func (m *CommandMessage) Info() *disgord.Message {
+	return m.message
+}
