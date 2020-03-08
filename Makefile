@@ -2,6 +2,9 @@ NAME := gruutbot
 MAIN_FILE := ./cli/cmd.go
 BUILD_DIR := build
 LINT_FLAGS := run --fast --enable=golint --enable=goconst --enable=gocyclo --enable=gocognit --enable=goimports --enable=maligned --enable=wsl --fix --color=always --print-issued-lines=false
+PLUGINS_DIR := plugins
+
+.PHONY: clean lint plugins
 
 run: $(MAIN_FILE)
 	@ go run $(MAIN_FILE)
@@ -12,6 +15,9 @@ clean:
 
 lint:
 	golangci-lint $(LINT_FLAGS)
+
+plugins:
+	@ $(CURDIR)/$(PLUGINS_DIR)/build.sh $(PLUGINS_DIR) $(BUILD_DIR)/$(PLUGINS_DIR)
 
 PLATFORMS := linux darwin
 os = $(word 1, $@)
