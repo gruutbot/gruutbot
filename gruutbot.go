@@ -3,7 +3,6 @@ package gruutbot
 import (
 	"context"
 	"strings"
-	"time"
 
 	"github.com/andersfylling/disgord"
 	"github.com/spf13/viper"
@@ -49,16 +48,9 @@ func (g *GruutBot) Start() {
 	g.log.Infof("Starting bot. Using %s as prefix", g.prefix)
 
 	g.client = disgord.New(disgord.Config{
-		BotToken: g.token,
-		Logger:   g.log,
-		CacheConfig: &disgord.CacheConfig{
-			Mutable:                  false,
-			DisableUserCaching:       true,
-			UserCacheLifetime:        time.Duration(1) * time.Second,
-			DisableVoiceStateCaching: true,
-			DisableChannelCaching:    true,
-			ChannelCacheLifetime:     time.Duration(1) * time.Second,
-		},
+		BotToken:     g.token,
+		Logger:       g.log,
+		DisableCache: true,
 	})
 
 	defer func() {
