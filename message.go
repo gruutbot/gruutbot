@@ -41,7 +41,7 @@ func (m *CommandMessage) Info() *disgord.Message {
 }
 
 func (m *CommandMessage) GuildInfo() (*disgord.Guild, error) {
-	return m.session.GetGuild(context.Background(), m.message.GuildID)
+	return m.session.GetGuild(context.Background(), m.message.GuildID, disgord.IgnoreCache)
 }
 
 func (m *CommandMessage) SessionInfo() disgord.Session {
