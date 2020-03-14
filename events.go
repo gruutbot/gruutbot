@@ -21,6 +21,8 @@ func (g *GruutBot) messageCreate(s *discordgo.Session, mc *discordgo.MessageCrea
 
 	message := NewMessage(m, s)
 
+	g.log.Debugf("Received command \"%s\"", command)
+
 	err := pluginManager.commands[command](*message, pluginManager.Log)
 
 	if err != nil {
