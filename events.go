@@ -8,6 +8,7 @@ import (
 
 func setupEvents(g *GruutBot) {
 	g.client.AddHandler(g.messageCreate)
+	g.client.AddHandler(g.ready)
 }
 
 func (g *GruutBot) messageCreate(s *discordgo.Session, mc *discordgo.MessageCreate) {
@@ -24,5 +25,12 @@ func (g *GruutBot) messageCreate(s *discordgo.Session, mc *discordgo.MessageCrea
 
 	if err != nil {
 		g.log.Error(err)
+	}
+}
+
+func (g *GruutBot) ready(s *discordgo.Session, mc *discordgo.Ready) {
+	err := s.UpdateStatus(1, g.prefix)
+	if err != nil {
+		g.log.Error("Failed to set status.", err)
 	}
 }
