@@ -1,20 +1,19 @@
 package gruutbot
 
 import (
-	"context"
 	"fmt"
 	"strings"
 
-	"github.com/andersfylling/disgord"
+	"github.com/bwmarrin/discordgo"
 )
 
 type CommandMessage struct {
-	message    *disgord.Message
+	message    *discordgo.Message
 	Parameters []string
-	session    disgord.Session
+	session    *discordgo.Session
 }
 
-func NewMessage(message *disgord.Message, session disgord.Session) *CommandMessage {
+func NewMessage(message *discordgo.Message, session *discordgo.Session) *CommandMessage {
 	content := strings.ToLower(message.Content)
 	content = strings.TrimSpace(content)
 	parameters := strings.Split(content, " ")[1:]
@@ -26,24 +25,24 @@ func NewMessage(message *disgord.Message, session disgord.Session) *CommandMessa
 	}
 }
 
-func (m *CommandMessage) Reply(reply string, mentionAuthor bool) (err error) {
+func (m *CommandMessage) Reply(replyMessage string, mentionAuthor bool) (err error) {
 	if mentionAuthor {
-		reply = fmt.Sprintf("%s %s", m.message.Author.Mention(), reply)
+		replyMessage = fmt.Sprintf("%s %s", m.message.Author.Mention(), replyMessage)
 	}
 
-	_, err = m.message.Reply(context.Background(), m.session, reply)
+	_, err = m.session.ChannelMessageSend(m.message.ChannelID, replyMessage)
 
 	return
 }
 
-func (m *CommandMessage) Info() *disgord.Message {
+func (m *CommandMessage) Info() *discordgo.Message {
 	return m.message
 }
 
-func (m *CommandMessage) GuildInfo() (*disgord.Guild, error) {
-	return m.session.GetGuild(context.Background(), m.message.GuildID)
+func (m *CommandMessage) GuildInfo() (*discordgo.Guild, error) {
+	return m.session.Guild(m.message.GuildID)
 }
 
-func (m *CommandMessage) SessionInfo() disgord.Session {
+func (m *CommandMessage) SessionInfo() *discordgo.Session {
 	return m.session
 }

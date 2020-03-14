@@ -1,16 +1,21 @@
 package gruutbot
 
 import (
-	"context"
+	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 
-	"github.com/andersfylling/disgord"
+	"github.com/sirupsen/logrus"
+
+	"github.com/bwmarrin/discordgo"
+
 	"github.com/spf13/viper"
 )
 
 type GruutBot struct {
 	viper         *viper.Viper
-	client        *disgord.Client
+	client        *discordgo.Session
 	log           Logger
 	token         string
 	prefix        string
@@ -45,19 +50,29 @@ func New(configs ...Config) *GruutBot {
 }
 
 func (g *GruutBot) Start() {
+	var err error
+
 	g.log.Infof("Starting bot. Using %s as prefix", g.prefix)
 
-	g.client = disgord.New(disgord.Config{
-		BotToken:     g.token,
-		Logger:       g.log,
-		DisableCache: true,
-	})
-
-	defer func() {
-		_ = g.client.StayConnectedUntilInterrupted(context.Background())
-	}()
+	g.client, err = discordgo.New("Bot " + g.token)
+	if err != nil {
+		g.log.Fatal("Error creating bot session.", err)
+	}
 
 	setupEvents(g)
+
+	err = g.client.Open()
+	if err != nil {
+		g.log.Fatal("Error opening connection.", err)
+	}
+
+	logrus.Infoln("Bot is now running.  Press CTRL-C to exit.")
+
+	sc := make(chan os.Signal, 1)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+	<-sc
+
+	_ = g.client.Close()
 }
 
 func fetchLogger(c Config) (l Logger) {
