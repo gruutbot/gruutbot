@@ -12,6 +12,14 @@ func setupEvents(g *GruutBot) {
 }
 
 func (g *GruutBot) messageCreate(s *discordgo.Session, mc *discordgo.MessageCreate) {
+	if mc.Author.Bot {
+		return
+	}
+
+	if !strings.HasPrefix(mc.Content, g.prefix) {
+		return
+	}
+
 	m := mc.Message
 	content := strings.ToLower(m.Content)
 	content = strings.TrimPrefix(content, g.prefix)
