@@ -1,31 +1,19 @@
 package gruutbot
 
 import (
-	"context"
 	"strings"
 
-	"github.com/andersfylling/disgord"
-	"github.com/andersfylling/disgord/std"
+	"github.com/bwmarrin/discordgo"
 )
 
 func setupEvents(g *GruutBot) {
-	filter, err := std.NewMsgFilter(context.Background(), g.client)
-
-	if err != nil {
-		g.log.Panic("Error creating message filter", err)
-	}
-
-	filter.SetPrefix(g.prefix)
-
-	g.client.On(disgord.EvtMessageCreate, filter.NotByBot, filter.HasPrefix, filter.StripPrefix, messageCreate)
-	g.client.On(disgord.EvtReady, func() {
-		_ = g.client.UpdateStatusString(g.prefix)
-	})
+	g.client.AddHandler(g.messageCreate)
 }
 
-func messageCreate(s disgord.Session, evt *disgord.MessageCreate) {
-	m := evt.Message
+func (g *GruutBot) messageCreate(s *discordgo.Session, mc *discordgo.MessageCreate) {
+	m := mc.Message
 	content := strings.ToLower(m.Content)
+	content = strings.TrimPrefix(content, g.prefix)
 	content = strings.TrimSpace(content)
 
 	command := strings.Split(content, " ")[0]
@@ -35,6 +23,6 @@ func messageCreate(s disgord.Session, evt *disgord.MessageCreate) {
 	err := pluginManager.commands[command](*message, pluginManager.Log)
 
 	if err != nil {
-		s.Logger().Error(err)
+		g.log.Error(err)
 	}
 }
